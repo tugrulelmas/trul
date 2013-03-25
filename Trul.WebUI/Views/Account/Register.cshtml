@@ -1,0 +1,44 @@
+﻿@model Trul.Application.UI.Core.Models.AccountViewModel
+@using Trul.WebUI.Helper
+
+@{
+    ViewBag.Title = this.GetLocalResource("RegisterTitle");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_PublicTopMenu", "Register")
+<ul class="breadcrumb">
+    <li class="active">@this.GetLocalResource("Register")</li>
+</ul>
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { id = "RegisterForm" }))
+{
+    <div class="form-horizontal">
+        <div class="control-group">
+            @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+            <div class="controls">
+                @Html.TextBoxFor(m => m.UserName)
+            </div>
+        </div>
+        <div class="control-group">
+            @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+            <div class="controls">
+                @Html.PasswordFor(m => m.Password)
+            </div>
+        </div>
+        <div class="control-group">
+            @Html.LabelFor(m => m.PasswordAgain, new { @class = "control-label" })
+            <div class="controls">
+                @Html.PasswordFor(m => m.PasswordAgain)
+            </div>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button id="btnRegister" class="btn btn-primary">@this.GetLocalResource("Save")</button>
+    </div>
+}
+
+@Html.Raw(Model.Validate(new Trul.Framework.Rules.ValidateSettings
+{
+    FormID = "RegisterForm",
+    SubmitControlID = "btnRegister"
+}))

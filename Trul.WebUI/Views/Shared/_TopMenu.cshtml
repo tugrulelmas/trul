@@ -1,0 +1,15 @@
+﻿@model string
+@using Trul.WebUI.Helper
+<br />
+<div class="navbar">
+    <div class="navbar-inner">
+        <ul class="nav">
+            <li class="@(Model.Equals("Home") ? "active" : "")">
+                @Html.ActionLink(Html.GetGlobalResource("Home"), "Index", "Home")
+            </li>
+            <li class="@(Model.Equals("Country") ? "active" : "")">
+                @Html.ActionLink(Html.GetGlobalResource("Country"), "Index", "Country")</li>
+        </ul>
+        @Html.Partial("_Language")
+    </div>
+</div>

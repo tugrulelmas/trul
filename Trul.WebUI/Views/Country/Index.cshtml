@@ -1,0 +1,71 @@
+﻿@model Trul.Application.UI.Core.Models.CountryViewModel
+@using Trul.WebUI.Helper
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_TopMenu", "Country")
+<div class="row">
+    <div class="span4">
+        <ul>
+            @foreach (var CountryItem in Model.Countries)
+            {
+                <li><span class="badge">@CountryItem.ID.ToString()</span> @CountryItem.Name</li>
+            }
+        </ul>
+    </div>
+    <div class="span3">
+        <div class="btn-group btn-group-vertical">
+            @Html.ActionButton(this.GetLocalResource("BindData"), "icon-refresh", new { data_bind = "click: bindData" }, new { id = "iconBindData" })
+            @Html.ActionButton(this.GetLocalResource("Remove"), "icon-remove", new { data_bind = "click: removeCountries" })
+            @Html.ActionButton(this.GetLocalResource("BindDataOnServer"), "icon-refresh", "GetCountriesOnServer", "Country", null, null, null)
+            @Html.ActionButton(this.GetLocalResource("Save"), "icon-save", new { data_bind = "click: save" })
+        </div>
+    </div>
+    <div class="span4">
+        <ul id="results" data-bind="foreach: CountryModel.Countries">
+            <li><span class="badge badge-inverse" data-bind="text: ID"></span>&nbsp;<span data-bind="text: Name"></span></li>
+        </ul>
+    </div>
+</div>
+@Html.Partial("_Modal")
+
+<script type="text/javascript">
+    
+    var data = @Html.Raw(Model.ToJS());
+    
+    var ViewModel = function()
+    {
+        var self = this;
+        self.CountryModel = ko.mapping.fromJS(data);
+        self.bindData = function(){
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetCountries", "Country")',
+                data: {},
+                datatype: "json",
+                success: function (result) {
+                    $("#iconBindData").addClass("icon-spin");
+                    self.removeCountries();
+                    $.each(result, function (i, item) {
+                        self.CountryModel.Countries.push(item);
+                    });
+                    $("#iconBindData").removeClass("icon-spin");
+                },
+                error: function (req, status, error) {
+                    alert(error + " " + req);
+                }
+            });
+        };
+        self.removeCountries = function(){
+            self.CountryModel.Countries.removeAll();
+        };
+        self.save = function(){
+            $("#partialModalBody").text(ko.mapping.toJSON(self.CountryModel));
+            $('#partialModal').modal('toggle');
+        };
+    }
+
+    ko.applyBindings(new ViewModel());
+</script>
